@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#142d35">
+<meta name="description" content="إدارة نادي نيهون تايجتسو والسامبو والحضور والاشتراكات">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>نيهون تايجتسو والسامبو | إدارة النادي</title>
+<style>
+:root{--navy:#142d35;--navy2:#203f48;--gold:#d6ad60;--bg:#f3f5f4;--card:#fff;--text:#18272b;--muted:#68777a;--line:#e2e8e6;--green:#18845b;--red:#c74747;--orange:#b7791f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+header{background:linear-gradient(125deg,var(--navy),#234650);color:white;padding:22px max(16px,calc((100% - 1150px)/2));border-bottom:4px solid var(--gold)}
+.brand{display:flex;align-items:center;gap:13px}.logo{width:48px;height:48px;border-radius:14px;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-size:25px;font-weight:900}
+h1{font-size:clamp(20px,4vw,29px);margin:0}.sub{color:#d4e0e2;font-size:13px;margin-top:4px}
+.wrap{max-width:1150px;margin:20px auto;padding:0 14px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:15px}
+nav{display:flex;gap:7px;flex-wrap:wrap}.btn,button,select,input{font:inherit}.btn,button{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;background:var(--navy);color:white}.btn.secondary,button.secondary{background:#e8eeee;color:var(--navy)}.btn.gold{background:var(--gold);color:#18272b}.btn.danger{background:#fce9e9;color:var(--red)}.btn.active{background:var(--gold);color:var(--navy);font-weight:700}
+select,input{border:1px solid var(--line);border-radius:9px;padding:10px;background:white;color:var(--text);min-width:0;width:100%}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}.card,.panel{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:0 3px 12px #172b3510}
+.stat small{color:var(--muted)}.stat strong{display:block;font-size:28px;margin-top:5px;color:var(--navy)}
+.panel{margin-bottom:14px}.panel h2{font-size:18px;margin:0 0 13px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.row .fit{flex:0 0 auto}
+table{width:100%;border-collapse:collapse;min-width:600px}th,td{text-align:start;padding:11px 9px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--muted);font-weight:650;background:#f8faf9}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px} .pill{display:inline-block;padding:4px 9px;border-radius:99px;font-size:12px;background:#eaf4ef;color:var(--green)}.pill.red{background:#fceaea;color:var(--red)}.pill.orange{background:#fff3df;color:var(--orange)}
+.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field label{display:block;font-size:13px;color:var(--muted);margin:0 0 5px}.actions{display:flex;gap:6px;flex-wrap:wrap}.empty{color:var(--muted);text-align:center;padding:25px}.hidden{display:none!important}.notice{font-size:13px;color:var(--muted);line-height:1.6}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
+@media(max-width:700px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid{grid-template-columns:1fr}.toolbar{align-items:stretch}.toolbar nav{display:grid;grid-template-columns:repeat(3,1fr)}.toolbar nav button{padding:9px 5px;font-size:13px}.wrap{margin-top:13px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">武</div><div><h1 id="clubTitle">نيهون تايجتسو والسامبو</h1><div class="sub" id="subtitle">نظام إدارة النادي الرياضي • Sport Club Manager</div></div></div></header>
+<main class="wrap">
+ <div class="toolbar"><nav id="nav"></nav><div class="row" style="max-width:210px"><select id="lang" aria-label="Language"><option value="ar">العربية</option><option value="fr">Français</option><option value="en">English</option></select></div></div>
+ <section id="dashboard"></section>
+ <section id="members" class="hidden"></section>
+ <section id="attendance" class="hidden"></section>
+ <section id="groups" class="hidden"></section>
+ <section id="payments" class="hidden"></section>
+ <section id="reports" class="hidden"></section>
+ <footer id="footer"></footer>
+</main>
+<script>
+const T={
+ar:{dash:"لوحة التحكم",members:"المنخرطون",attendance:"الحضور",groups:"الأقسام",payments:"الاشتراكات",reports:"التقارير",total:"إجمالي المنخرطين",groupsN:"الأقسام النشطة",present:"حاضرون اليوم",absent:"غائبون اليوم",quick:"نظرة عامة",recent:"آخر تسجيلات الحضور",add:"إضافة",name:"الاسم الكامل",phone:"الهاتف",group:"القسم",age:"العمر",joined:"تاريخ الانخراط",save:"حفظ",cancel:"إلغاء",search:"ابحث عن منخرط",actions:"إجراءات",edit:"تعديل",delete:"حذف",mark:"تسجيل الحضور",date:"التاريخ",status:"الحالة",here:"حاضر",away:"غائب",late:"متأخر",choose:"اختر القسم",newGroup:"اسم القسم الجديد",coach:"اسم المدرب",addGroup:"إضافة قسم",fee:"قيمة الاشتراك الشهري",month:"الشهر",paid:"مدفوع",unpaid:"غير مدفوع",record:"تسجيل دفعة",amount:"المبلغ",paidAt:"تاريخ الدفع",all:"الكل",export:"تصدير CSV",print:"طباعة",attendanceRate:"نسبة الحضور",due:"المبالغ غير المسددة",noData:"لا توجد بيانات بعد",confirm:"هل تريد حذف هذا السجل؟",saved:"تم الحفظ",club:"اسم النادي",local:"تُحفظ البيانات على هذا الجهاز فقط. استخدم التصدير للاحتفاظ بنسخة احتياطية أو نقلها.",backup:"تصدير نسخة احتياطية",import:"استيراد نسخة احتياطية",selectFile:"اختر ملف JSON",member:"المنخرط",totalPaid:"إجمالي المدفوعات",allGroups:"كل الأقسام",noGroup:"غير محدد"},
+fr:{dash:"Tableau de bord",members:"Adhérents",attendance:"Présences",groups:"Sections",payments:"Cotisations",reports:"Rapports",total:"Total des adhérents",groupsN:"Sections actives",present:"Présents aujourd’hui",absent:"Absents aujourd’hui",quick:"Vue d’ensemble",recent:"Dernières présences",add:"Ajouter",name:"Nom complet",phone:"Téléphone",group:"Section",age:"Âge",joined:"Date d’adhésion",save:"Enregistrer",cancel:"Annuler",search:"Rechercher un adhérent",actions:"Actions",edit:"Modifier",delete:"Supprimer",mark:"Saisir les présences",date:"Date",status:"Statut",here:"Présent",away:"Absent",late:"En retard",choose:"Choisir une section",newGroup:"Nom de la nouvelle section",coach:"Nom de l’entraîneur",addGroup:"Ajouter section",fee:"Cotisation mensuelle",month:"Mois",paid:"Payé",unpaid:"Impayé",record:"Enregistrer paiement",amount:"Montant",paidAt:"Date du paiement",all:"Tous",export:"Exporter CSV",print:"Imprimer",attendanceRate:"Taux de présence",due:"Montants impayés",noData:"Aucune donnée pour le moment",confirm:"Supprimer cet élément ?",saved:"Enregistré",club:"Nom du club",local:"Les données sont enregistrées sur cet appareil uniquement. Exportez une sauvegarde pour les conserver ou les transférer.",backup:"Exporter sauvegarde",import:"Importer sauvegarde",selectFile:"Choisir un fichier JSON",member:"Adhérent",totalPaid:"Total encaissé",allGroups:"Toutes les sections",noGroup:"Non défini"},
+en:{dash:"Dashboard",members:"Members",attendance:"Attendance",groups:"Sections",payments:"Membership fees",reports:"Reports",total:"Total members",groupsN:"Active sections",present:"Present today",absent:"Absent today",quick:"Overview",recent:"Recent attendance",add:"Add",name:"Full name",phone:"Phone",group:"Section",age:"Age",joined:"Join date",save:"Save",cancel:"Cancel",search:"Search member",actions:"Actions",edit:"Edit",delete:"Delete",mark:"Record attendance",date:"Date",status:"Status",here:"Present",away:"Absent",late:"Late",choose:"Choose section",newGroup:"New section name",coach:"Coach name",addGroup:"Add section",fee:"Monthly fee",month:"Month",paid:"Paid",unpaid:"Unpaid",record:"Record payment",amount:"Amount",paidAt:"Payment date",all:"All",export:"Export CSV",print:"Print",attendanceRate:"Attendance rate",due:"Unpaid amount",noData:"No data yet",confirm:"Delete this record?",saved:"Saved",club:"Club name",local:"Data is stored on this device only. Export a backup to keep or transfer your records.",backup:"Export backup",import:"Import backup",selectFile:"Choose JSON file",member:"Member",totalPaid:"Total collected",allGroups:"All sections",noGroup:"Not set"}
+};
+let lang=localStorage.getItem('scm_lang')||'ar', page='dash';
+let db=JSON.parse(localStorage.getItem('scm_db')||'null')||{members:[],groups:[{id:1,name:'Nihon Taijutsu',coach:''},{id:2,name:'Sambo',coach:''}],attendance:[],payments:[]};
+const $=id=>document.getElementById(id), tr=k=>T[lang][k]||k, today=()=>new Date().toISOString().slice(0,10), monthNow=()=>today().slice(0,7);
+function persist(){localStorage.setItem('scm_db',JSON.stringify(db));}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function groupName(id){return db.groups.find(g=>g.id==id)?.name||tr('noGroup')}
+function nav(){let pages=['dash','members','attendance','groups','payments','reports'];$('nav').innerHTML=pages.map(p=>`<button class="btn ${page===p?'active':'secondary'}" data-page="${p}">${tr(p)}</button>`).join('');$('nav').querySelectorAll('button').forEach(b=>b.onclick=()=>show(b.dataset.page));}
+function show(p){page=p;['dashboard','members','attendance','groups','payments','reports'].forEach(x=>$(x).classList.toggle('hidden',x!==(p==='dash'?'dashboard':p)));nav();render();}
+function render(){
+ document.documentElement.lang=lang;document.documentElement.dir=lang==='ar'?'rtl':'ltr';$('lang').value=lang;
+ $('clubTitle').textContent=localStorage.getItem('scm_club')||'نيهون تايجتسو والسامبو';$('footer').textContent=tr('local');
+ if(page==='dash') dashboard(); if(page==='members') members(); if(page==='attendance') attendance(); if(page==='groups') groups(); if(page==='payments') payments(); if(page==='reports') reports();
+}
+function dashboard(){
+ let todays=db.attendance.filter(a=>a.date===today()),p=todays.filter(a=>a.status==='present').length,a=todays.filter(a=>a.status==='absent').length;
+ $('dashboard').innerHTML=`<div class="cards"><div class="card stat"><small>${tr('total')}</small><strong>${db.members.length}</strong></div><div class="card stat"><small>${tr('groupsN')}</small><strong>${db.groups.length}</strong></div><div class="card stat"><small>${tr('present')}</small><strong>${p}</strong></div><div class="card stat"><small>${tr('absent')}</small><strong>${a}</strong></div></div><div class="panel"><h2>${tr('quick')}</h2><div class="row"><button onclick="show('members')">${tr('add')} • ${tr('members')}</button><button class="secondary" onclick="show('attendance')">${tr('mark')}</button><button class="secondary" onclick="show('payments')">${tr('record')}</button></div></div><div class="panel"><h2>${tr('recent')}</h2>${db.attendance.length?table(['member','group','date','status'],db.attendance.slice(-6).reverse().map(x=>[memberName(x.memberId),groupName(x.groupId),x.date,statusLabel(x.status)])):`<div class="empty">${tr('noData')}</div>`}</div><div class="panel"><h2>${tr('club')}</h2><div class="row"><input id="clubInput" value="${esc(localStorage.getItem('scm_club')||'نيهون تايجتسو والسامبو')}"><button class="fit" onclick="localStorage.setItem('scm_club',$('clubInput').value);render()">${tr('save')}</button></div></div>`;
+}
+function table(headers,rows){return `<div class="tablewrap"><table><thead><tr>${headers.map(h=>`<th>${tr(h)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
+function memberName(id){return db.members.find(m=>m.id==id)?.name||'—'}
+function statusLabel(s){return s==='present'?`<span class="pill">${tr('here')}</span>`:s==='absent'?`<span class="pill red">${tr('away')}</span>`:`<span class="pill orange">${tr('late')}</span>`}
+function groupOptions(sel=''){return `<option value="">${tr('choose')}</option>`+db.groups.map(g=>`<option value="${g.id}" ${sel==g.id?'selected':''}>${esc(g.name)}</option>`).join('')}
+function members(){
+ $('members').innerHTML=`<div class="panel"><h2>${tr('add')} • ${tr('members')}</h2><form id="memberForm" class="formgrid"><input type="hidden" id="mid"><div class="field"><label>${tr('name')}</label><input id="mname" required></div><div class="field"><label>${tr('phone')}</label><input id="mphone" type="tel"></div><div class="field"><label>${tr('age')}</label><input id="mage" type="number" min="1"></div><div class="field"><label>${tr('group')}</label><select id="mgroup">${groupOptions()}</select></div><div class="field"><label>${tr('joined')}</label><input id="mjoined" type="date" value="${today()}"></div><div class="row" style="align-self:end"><button>${tr('save')}</button><button type="button" class="secondary" onclick="resetMember()">${tr('cancel')}</button></div></form></div><div class="panel"><div class="row"><h2>${tr('members')}</h2><input id="msearch" placeholder="${tr('search')}" oninput="filterMembers()" style="max-width:260px"></div><div id="memberTable"></div></div>`;
+ filterMembers();$('memberForm').onsubmit=e=>{e.preventDefault();let id=$('mid').value;let m={id:id?+id:Date.now(),name:$('mname').value.trim(),phone:$('mphone').value,age:$('mage').value,groupId:$('mgroup').value,joined:$('mjoined').value};if(id)db.members=db.members.map(x=>x.id==id?m:x);else db.members.push(m);persist();members();};
+}
+function resetMember(){$('memberForm').reset();$('mid').value='';$('mjoined').value=today()}
+function filterMembers(){let q=($('msearch')?.value||'').toLowerCase(),list=db.members.filter(m=>(m.name+m.phone).toLowerCase().includes(q));$('memberTable').innerHTML=list.length?`<div class="tablewrap"><table><thead><tr><th>${tr('name')}</th><th>${tr('phone')}</th><th>${tr('group')}</th><th>${tr('actions')}</th></tr></thead><tbody>${list.map(m=>`<tr><td>${esc(m.name)}</td><td>${esc(m.phone)}</td><td>${esc(groupName(m.groupId))}</td><td><div class="actions"><button class="secondary" onclick="editMember(${m.id})">${tr('edit')}</button><button class="danger" onclick="delMember(${m.id})">${tr('delete')}</button></div></td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">${tr('noData')}</div>`}
+function editMember(id){let m=db.members.find(x=>x.id===id);$('mid').value=m.id;$('mname').value=m.name;$('mphone').value=m.phone;$('mage').value=m.age;$('mgroup').value=m.groupId;$('mjoined').value=m.joined;window.scrollTo({top:0,behavior:'smooth'})}
+function delMember(id){if(confirm(tr('confirm'))){db.members=db.members.filter(m=>m.id!==id);persist();members()}}
+function attendance(){
+ $('attendance').innerHTML=`<div class="panel"><h2>${tr('mark')}</h2><div class="formgrid"><div class="field"><label>${tr('date')}</label><input type="date" id="adate" value="${today()}"></div><div class="field"><label>${tr('group')}</label><select id="agroup">${groupOptions()}</select></div></div><div id="attList" style="margin-top:14px"></div><div class="row" style="margin-top:12px"><button onclick="saveAttendance()">${tr('save')}</button></div></div><div class="panel"><h2>${tr('recent')}</h2>${db.attendance.length?table(['member','group','date','status'],db.attendance.slice(-15).reverse().map(x=>[memberName(x.memberId),groupName(x.groupId),x.date,statusLabel(x.status)])):`<div class="empty">${tr('noData')}</div>`}</div>`;
+ $('agroup').onchange=drawAttList;$('adate').onchange=drawAttList;drawAttList();
+}
+function drawAttList(){let gid=$('agroup').value,date=$('adate').value;let ms=db.members.filter(m=>!gid||m.groupId==gid);$('attList').innerHTML=ms.length?ms.map(m=>{let old=db.attendance.find(a=>a.memberId==m.id&&a.date===date);return `<div class="row" style="padding:8px;border-bottom:1px solid var(--line)"><div>${esc(m.name)}</div><select data-mid="${m.id}"><option value="present" ${!old||old.status==='present'?'selected':''}>${tr('here')}</option><option value="absent" ${old?.status==='absent'?'selected':''}>${tr('away')}</option><option value="late" ${old?.status==='late'?'selected':''}>${tr('late')}</option></select></div>`}).join(''):`<div class="empty">${tr('noData')}</div>`}
+function saveAttendance(){let date=$('adate').value,gid=$('agroup').value;document.querySelectorAll('#attList select').forEach(s=>{let id=+s.dataset.mid,old=db.attendance.find(a=>a.memberId===id&&a.date===date);if(old)old.status=s.value;else db.attendance.push({id:Date.now()+id,memberId:id,groupId:db.members.find(m=>m.id===id)?.groupId||gid,date,status:s.value})});persist();attendance();alert(tr('saved'))}
+function groups(){
+ $('groups').innerHTML=`<div class="panel"><h2>${tr('addGroup')}</h2><form id="groupForm" class="row"><input id="gname" placeholder="${tr('newGroup')}" required><input id="gcoach" placeholder="${tr('coach')}"><button class="fit">${tr('add')}</button></form></div><div class="panel"><h2>${tr('groups')}</h2>${db.groups.length?table(['group','coach','total','actions'],db.groups.map(g=>[esc(g.name),esc(g.coach||'—'),db.members.filter(m=>m.groupId==g.id).length,`<button class="danger" onclick="delGroup(${g.id})">${tr('delete')}</button>`])):`<div class="empty">${tr('noData')}</div>`}</div>`;
+ $('groupForm').onsubmit=e=>{e.preventDefault();db.groups.push({id:Date.now(),name:$('gname').value.trim(),coach:$('gcoach').value.trim()});persist();groups()};
+}
+function delGroup(id){if(confirm(tr('confirm'))){db.groups=db.groups.filter(g=>g.id!==id);persist();groups()}}
+function payments(){
+ let ms=db.members; $('payments').innerHTML=`<div class="panel"><h2>${tr('record')}</h2><form id="payForm" class="formgrid"><div class="field"><label>${tr('member')}</label><select id="pmember" required>${ms.map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join('')}</select></div><div class="field"><label>${tr('month')}</label><input id="pmonth" type="month" value="${monthNow()}" required></div><div class="field"><label>${tr('amount')}</label><input id="pamount" type="number" min="0" step="0.01" required></div><div class="field"><label>${tr('paidAt')}</label><input id="pdate" type="date" value="${today()}" required></div><button>${tr('record')}</button></form></div><div class="panel"><h2>${tr('payments')}</h2>${db.payments.length?table(['member','month','amount','paidAt'],db.payments.slice().reverse().map(p=>[memberName(p.memberId),p.month,Number(p.amount).toLocaleString(),p.date])):`<div class="empty">${tr('noData')}</div>`}</div>`;
+ $('payForm').onsubmit=e=>{e.preventDefault();db.payments.push({id:Date.now(),memberId:+$('pmember').value,month:$('pmonth').value,amount:+$('pamount').value,date:$('pdate').value});persist();payments();};
+}
+function reports(){
+ let paid=db.payments.reduce((s,p)=>s+Number(p.amount||0),0),due=0,counts=db.attendance.length,p=db.attendance.filter(a=>a.status==='present').length,rate=counts?Math.round(p/counts*100):0;
+ $('reports').innerHTML=`<div class="cards"><div class="card stat"><small>${tr('totalPaid')}</small><strong>${paid.toLocaleString()}</strong></div><div class="card stat"><small>${tr('due')}</small><strong>${due.toLocaleString()}</strong></div><div class="card stat"><small>${tr('attendanceRate')}</small><strong>${rate}%</strong></div><div class="card stat"><small>${tr('members')}</small><strong>${db.members.length}</strong></div></div><div class="panel"><h2>${tr('reports')}</h2><div class="row"><button onclick="exportCSV()">${tr('export')}</button><button class="secondary" onclick="window.print()">${tr('print')}</button><button class="secondary" onclick="backup()">${tr('backup')}</button><label class="btn secondary" style="text-align:center">${tr('import')}<input type="file" accept=".json,application/json" onchange="restore(event)" hidden></label></div><p class="notice">${tr('local')}</p></div>`;
+}
+function exportCSV(){let rows=[['Name','Phone','Section','Date','Status'],...db.attendance.map(a=>[memberName(a.memberId),db.members.find(m=>m.id==a.memberId)?.phone||'',groupName(a.groupId),a.date,a.status])];download('attendance.csv','\ufeff'+rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv;charset=utf-8')}
+function backup(){download('nihon-sambo-backup.json',JSON.stringify(db,null,2),'application/json')}
+function restore(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.members||!x.groups||!x.attendance||!x.payments)throw 0;db=x;persist();show(page);alert(tr('saved'))}catch{alert('Invalid backup file')}};r.readAsText(f)}
+function download(name,data,type){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
+$('lang').onchange=e=>{lang=e.target.value;localStorage.setItem('scm_lang',lang);nav();render()};nav();render();
+</script>
+<script>if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(()=>{})); }</script>
+</body></html>
