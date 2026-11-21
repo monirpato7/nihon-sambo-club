@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "نيهون تايجتسو والسامبو",
+  "short_name": "نيهون سامبو",
+  "description": "إدارة النادي والحضور والاشتراكات",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f5f4",
+  "theme_color": "#142d35",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
